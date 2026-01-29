@@ -322,9 +322,12 @@ def check_glic_config(config: dict) -> dict:
     
     profile_info = config.get("profile", {}).get("info_cache", {})
     
-    for profile_name, profile_data in profile_info.items():
+    for profile_id, profile_data in profile_info.items():
         is_eligible = profile_data.get(GLIC_KEY, False)
-        results[profile_name] = {
+        # 尝试获取 Profile 的真实名称
+        actual_name = profile_data.get("name", profile_id)
+        results[profile_id] = {
+            "name": actual_name,
             "current": is_eligible,
             "target": True,
             "ok": is_eligible == True
@@ -615,11 +618,12 @@ def print_check_results(country_results: dict, glic_results: dict,
         if not result["ok"]:
             all_ok = False
     
-    # GLIC 配置
+    # Gemini 配置
     print(colored("\n🤖 Gemini in Chrome (GLIC) 配置:", Color.BLUE))
-    for profile, result in glic_results.items():
+    for profile_id, result in glic_results.items():
         status = colored("✅ 已启用", Color.GREEN) if result["ok"] else colored("❌ 未启用", Color.RED)
-        print(f"  {profile}: {status}")
+        display_name = f"{result['name']} ({profile_id})" if result['name'] != profile_id else profile_id
+        print(f"  {display_name}: {status}")
         if not result["ok"]:
             all_ok = False
     
