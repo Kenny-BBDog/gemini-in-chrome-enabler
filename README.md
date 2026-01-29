@@ -6,6 +6,24 @@
 
 ## 中文
 
+### ⚡ 三步搞定
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
+cd gemini-in-chrome-enabler
+
+# 2. 安装依赖
+pip install psutil
+
+# 3. 运行（会自动关闭 Chrome，修复配置，然后重启）
+python enable_gemini.py --fix
+```
+
+> 💡 修复后需要**手动重启 Chrome 一次**，然后就能看到 Gemini 图标了！
+
+---
+
 ### 功能介绍
 
 一键检测和启用 Chrome 的 AI 功能，包括：
@@ -82,6 +100,24 @@ python enable_gemini.py --fix --no-restart
 ---
 
 ## English
+
+### ⚡ Quick Start
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
+cd gemini-in-chrome-enabler
+
+# 2. Install dependency
+pip install psutil
+
+# 3. Run (will auto-close Chrome, fix config, then restart)
+python enable_gemini.py --fix
+```
+
+> 💡 After fixing, **restart Chrome once manually** to see the Gemini icon!
+
+---
 
 ### Features
 
