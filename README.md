@@ -10,10 +10,14 @@
 
 ### 📥 下载与使用
 
-#### 方案：直接运行 📦 (推荐)
-直接下载 [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe) 运行。
-- **优点**：无需安装 Python，一键双击运行。
-- **流程**：首次运行会显示**设备 ID** -> 联系开发者获取**激活码** -> 激活后一键修复程序。
+#### 1. 闲鱼版 (仅供作者赚点零花钱，无需理会) 📦
+下载 [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe)。
+- **说明**：一键双击运行，专门为咸鱼付费用户准备，懂技术的可以直接看源码运行。
+
+#### 2. 开发者/高级版 (源码运行) 🛠️
+适合懂技术、能自行部署环境的用户。
+- **优势**：完全开源，无视激活码。
+- **运行**：详见底部的 [开发者说明](#-开发者与高级用户)。
 
 ---
 
@@ -37,37 +41,16 @@
 | 🔄 自动关闭/重启 Chrome | ✅ | 需安装 psutil |
 | 👤 Google 账号语言 | ❌ | 需手动设置 |
 
-### 安装
-
-**方式一：使用 uv (推荐)**
-```bash
-# 安装 uv
-# Windows:
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-# macOS/Linux:
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# 安装依赖并运行
-uv sync
-uv run enable_gemini.py --fix
-```
-
-**方式二：使用 pip**
-```bash
-pip install psutil
-python enable_gemini.py --fix
-```
-
-### 使用方法
+### 使用指引 (命令行)
 
 ```bash
-# 仅检测（查看当前配置状态）
+# 1. 仅检测配置状态
 python enable_gemini.py
 
-# 检测 + 自动修复（会自动关闭并重启 Chrome）
+# 2. 自动检测 + 修复并重启 Chrome (推荐方案)
 python enable_gemini.py --fix
 
-# 修复但不自动重启 Chrome
+# 3. 仅修复配置 (若您想手动重启则用此项)
 python enable_gemini.py --fix --no-restart
 ```
 
@@ -182,22 +165,27 @@ One-click detection and enablement of Chrome AI features:
 
 ### 📥 Download & Usage
 
-#### Recommendation: Portable EXE 📦
-Download [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe) and run.
-- **Pros**: No Python required, just double-click.
-- **Process**: Run to get **Device ID** -> Contact developer for **Activation Code** -> Enjoy.
+#### 1. Xianyu Edition (Author's tip-earner, safe to ignore) 📦
+Download [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe).
+- **Note**: A portable tool for Xianyu users. GitHub users are encouraged to run from source.
+
+#### 2. Developer Edition (Python) 🛠️
+For advanced users. Bypasses activation.
+- **Usage**: See [Developers Section](#-开发者与高级用户) below.
 
 ---
 
-## 🛠️ Developers
+## 🛠️ 开发者与高级用户 / Developers
 
-If you want to audit the code or build from source:
+如果您想审核代码或自行编译运行：
 
 ```bash
-git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
-cd gemini-in-chrome-enabler
+# 使用 pip
 pip install psutil
 python enable_gemini.py --fix
+
+# 或者使用 uv
+uv run enable_gemini.py --fix
 ```
 
 ### Manual: Set Google Account Language
