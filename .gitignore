@@ -2,9 +2,12 @@
 __pycache__/
 *.py[oc]
 build/
-dist/
 wheels/
 *.egg-info
+
+# PyInstaller temp files (keep releases/)
+dist/
+*.spec
 
 # Virtual environments
 .venv
@@ -20,3 +23,7 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# GeminiEnabler
+.license
+

@@ -6,8 +6,20 @@
 
 ## 中文
 
-### ⚡ 三步搞定
+---
 
+### 📥 下载与使用
+
+本工具提供两种使用方式：
+
+#### 方案 A：直接运行 📦 (推荐普通用户)
+直接下载 [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe) 运行。
+- **优点**：无需安装 Python，一键双击运行。
+- **注意**：首次运行会显示**设备 ID**。为了过滤无效用户，你需要输入**激活码**。
+- **获取激活码**：请联系开发者并提供你的设备 ID。
+
+#### 方案 B：源码运行 🛠️ (推荐开发者/进阶用户)
+如果你不想使用激活码，或者想确认代码安全性，可以直接通过 Python 运行源码：
 ```bash
 # 1. 克隆项目
 git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
@@ -16,11 +28,10 @@ cd gemini-in-chrome-enabler
 # 2. 安装依赖
 pip install psutil
 
-# 3. 运行（会自动关闭 Chrome，修复配置，然后重启）
+# 3. 运行
 python enable_gemini.py --fix
 ```
-
-> 💡 修复后需要**手动重启 Chrome 一次**，然后就能看到 Gemini 图标了！
+- **注意**：源码运行**不设激活验证**，完全开源透明。
 
 ---
 
@@ -183,39 +194,34 @@ One-click detection and enablement of Chrome AI features:
 | 🔄 Auto Chrome restart | ✅ | Requires psutil |
 | 👤 Google Account Language | ❌ | Manual setup required |
 
-### Installation
+---
 
-**Option 1: Using uv (recommended)**
+### 📥 Download & Usage
+
+We provide two ways to use this tool:
+
+#### Option A: Portable EXE 📦 (Recommended for general users)
+Download [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe) and run.
+- **Pros**: No Python required, just double-click.
+- **Note**: On first run, it will display a **Device ID**. You will need an **Activation Code** to proceed.
+- **Get Code**: Contact the developer with your Device ID.
+
+#### Option B: Run from Source 🛠️ (Recommended for developers)
+If you prefer not to use an activation code or want to audit the code, run it via Python:
 ```bash
-# Install uv
-# Windows:
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-# macOS/Linux:
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# 1. Clone
+git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
+cd gemini-in-chrome-enabler
 
-# Install deps and run
-uv sync
-uv run enable_gemini.py --fix
-```
-
-**Option 2: Using pip**
-```bash
+# 2. Install deps
 pip install psutil
+
+# 3. Run
 python enable_gemini.py --fix
 ```
+- **Note**: Running from source **removes the activation requirement**.
 
-### Usage
-
-```bash
-# Check only (view current configuration)
-python enable_gemini.py
-
-# Check + Auto-fix (will auto close and restart Chrome)
-python enable_gemini.py --fix
-
-# Fix without auto-restarting Chrome
-python enable_gemini.py --fix --no-restart
-```
+---
 
 ### Manual: Set Google Account Language
 

@@ -11,6 +11,8 @@ import sys
 import shutil
 import platform
 import subprocess
+import hashlib
+import uuid
 from datetime import datetime
 from pathlib import Path
 
@@ -26,6 +28,8 @@ except ImportError:
 
 TARGET_COUNTRY = "us"  # 目标国家代码
 TARGET_LOCALE = "en-US"  # 目标语言区域
+SECRET_SALT = "GeminiEnabler_Safe_Salt_2026"  # 激活码盐值
+LICENSE_FILE = ".license"
 
 # 需要检查/修改的配置项
 COUNTRY_KEYS = [
@@ -75,6 +79,63 @@ def colored(text: str, color: str) -> str:
     if sys.platform == "win32":
         os.system("")  # 启用 Windows ANSI 支持
     return f"{color}{text}{Color.END}"
+
+
+# ============== 激活与加密 (仅限打包版) ==============
+
+def get_hwid() -> str:
+    """获取硬件唯一标识符 (HWID)"""
+    try:
+        # 使用 MAC 地址作为简单标识
+        node = uuid.getnode()
+        return hashlib.sha256(str(node).encode()).hexdigest()[:16].upper()
+    except Exception:
+        return "UNKNOWN-DEVICE"
+
+
+def verify_activation() -> bool:
+    """校验激活状态"""
+    # 如果不是打包运行，自动跳过验证
+    if not getattr(sys, 'frozen', False):
+        return True
+    
+    hwid = get_hwid()
+    expected_code = hashlib.md5((hwid + SECRET_SALT).encode()).hexdigest().upper()
+    
+    # 检查本地许可证
+    license_path = Path(sys.executable).parent / LICENSE_FILE
+    if license_path.exists():
+        try:
+            with open(license_path, "r") as f:
+                saved_code = f.read().strip()
+                if saved_code == expected_code:
+                    return True
+        except Exception:
+            pass
+
+    # 提示输入激活码
+    print(colored("\n🔑 程序未激活", Color.BOLD))
+    print(f"   您的设备 ID: {colored(hwid, Color.CYAN)}")
+    print(f"   提示: 懂技术的用户可以直接从 GitHub 拉取源码运行，无需激活码。")
+    print(f"         本项目 GitHub: https://github.com/Kenny-BBDog/gemini-in-chrome-enabler")
+    
+    while True:
+        code = input(f"\n   请输入激活码 (或输入 q 退出): ").strip().upper()
+        if code == 'Q':
+            sys.exit(0)
+        
+        if code == expected_code:
+            # 保存许可证
+            try:
+                with open(license_path, "w") as f:
+                    f.write(code)
+                print(colored("   ✅ 激活成功！", Color.GREEN))
+                return True
+            except Exception as e:
+                print(colored(f"   ⚠️ 激活成功但无法保存许可证文件: {e}", Color.YELLOW))
+                return True
+        else:
+            print(colored("   ❌ 激活码错误，请重试或前往 GitHub 查看源码。", Color.RED))
 
 
 # ============== Chrome 进程管理 ==============
@@ -638,6 +699,10 @@ def process_chrome(user_data_path: Path, fix: bool = False) -> bool:
 def main():
     """主函数"""
     print_banner()
+    
+    # 激活码校验 (仅限打包版)
+    if not verify_activation():
+        return 1
     
     fix_mode = "--fix" in sys.argv or "-f" in sys.argv
     auto_restart = "--no-restart" not in sys.argv
