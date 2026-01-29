@@ -1,0 +1,21 @@
+[project]
+name = "gemini-in-chrome-enabler"
+version = "1.0.0"
+description = "一键检测和启用 Chrome 的 Gemini AI、AI 历史搜索等功能"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+keywords = ["chrome", "gemini", "ai", "browser"]
+authors = [
+    {name = "Kenny-BBDog"}
+]
+dependencies = [
+    "psutil>=5.9.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Kenny-BBDog/gemini-in-chrome-enabler"
+Repository = "https://github.com/Kenny-BBDog/gemini-in-chrome-enabler"
+
+[project.scripts]
+enable-gemini = "enable_gemini:main"
