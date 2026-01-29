@@ -57,7 +57,7 @@
 | 🚩 实验项 (Flags) | ✅ | 自动启用 9 个相关的 `chrome://flags` 实验功能 |
 | 🌐 界面语言 | ✅ | 将 Chrome 界面设为 English (US) |
 | 📝 偏好语言 | ✅ | 将首选搜索语言设为英文 |
-| � 账号语言 | ❌ | **需手动** 将 Google 账号语言设为英文 (见下文) |
+| 👤 账号语言 | ❌ | **需手动** 将 Google 账号语言设为英文 (见下文) |
 
 ---
 
@@ -82,6 +82,12 @@
 
 ### 原理说明 (开发者参考)
 脚本会安全地修改路径下的 `Local State` 和 `Preferences` 文件，并在修改前自动创建备份。涉及的关键键值包括 `variations_country`, `is_glic_eligible` 以及 `browser.enabled_labs_experiments`。
+
+---
+
+**Made with ❤️ by [Kenny-BBDog](https://github.com/Kenny-BBDog)**
+
+> 🔓 **随便用，如果对您有帮助，记得给个 Star ⭐ 鼓励一下！**
 
 ---
 
@@ -155,4 +161,8 @@ The script cannot modify your cloud-side Google settings. You MUST:
 
 ---
 
-**Made with ❤️ by Kenny-BBDog**
+**Made with ❤️ by [Kenny-BBDog](https://github.com/Kenny-BBDog)**
+
+> 🔓 **Free to use! If this tool helps you, please give it a Star ⭐!**
+
+---
