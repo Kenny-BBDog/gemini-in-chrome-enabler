@@ -66,20 +66,11 @@ python enable_gemini.py --fix --no-restart
 
 ### ❌ 修复后仍无法使用？故障排查
 
-#### 1️⃣ 先检查账号资格（最重要！）
+#### 1️⃣ 关于账号资格
 
-在运行本工具之前，请先确认你的 Google 账号有 Gemini 资格：
-
-1. 打开 Chrome，访问 `chrome://sync-internals/`
-2. 在左侧找到 **Priority Preferences** → **sync.glic_rollout_eligibility**
-3. 查看右侧 JSON 中的 `"value"` 字段
-
-| value | 含义 |
-|-------|-----|
-| `true` | ✅ 账号有资格，可以继续 |
-| `false` | ❌ 账号无资格，无法使用 Gemini |
-
-> 💡 如果是 `false`，可以尝试登录其他 Google 账号再检查
+本工具已集成 **全自动资格检测**。
+- **如何查看**：启动工具后，在输出报告的“👤 Google 账号资格 (同步数据)”一栏即可看到结果。
+- **无资格怎么办**：如果显示 `False` (无资格)，说明该 Google 账号不在灰度测试范围内，建议切换其他账号后再试。
 
 #### 2️⃣ 网络环境要求
 
