@@ -37,6 +37,7 @@ python enable_gemini.py --fix
 |--------|-----------|------|
 | 🌍 国家/地区配置 | ✅ | `variations_country` 等配置项 |
 | 🤖 GLIC 配置 | ✅ | `is_glic_eligible` 启用 Gemini |
+| 🚩 Chrome Flags | ✅ | **新增** 自动启用 9 个 GLIC 实验功能 |
 | 🌐 Chrome 语言 | ✅ | `app_locale` 设为英语(美国) |
 | 📝 Profile 语言偏好 | ✅ | `accept_languages` 首选英语 |
 | 🔄 自动关闭/重启 Chrome | ✅ | 需安装 psutil |
@@ -132,6 +133,7 @@ One-click detection and enablement of Chrome AI features:
 |------|-------------|-------------|
 | 🌍 Country Config | ✅ | `variations_country` and related |
 | 🤖 GLIC Config | ✅ | `is_glic_eligible` for Gemini |
+| 🚩 Chrome Flags | ✅ | **NEW** Auto-enable 9 GLIC experiment flags |
 | 🌐 Chrome Language | ✅ | `app_locale` set to en-US |
 | 📝 Profile Language | ✅ | `accept_languages` prefers English |
 | 🔄 Auto Chrome restart | ✅ | Requires psutil |

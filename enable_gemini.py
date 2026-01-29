@@ -40,6 +40,21 @@ ARRAY_COUNTRY_KEY = "variations_permanent_consistency_country"
 # GLIC 配置项
 GLIC_KEY = "is_glic_eligible"
 
+# GLIC 相关的 Chrome Flags (chrome://flags)
+# 存储在 Local State 的 browser.enabled_labs_experiments 中
+# 格式: "flag-name@1" 表示启用, "@2" 表示禁用
+GLIC_FLAGS = [
+    "glic",                      # 主开关：Gemini Live in Chrome
+    "glic-actor",                # GLIC Actor
+    "glic-actor-autofill",       # GLIC 自动填充
+    "glic-pre-warming",          # GLIC 预热
+    "glic-side-panel",           # GLIC 侧边栏
+    "glic-z-order-changes",      # GLIC Z 顺序变化
+    "glic-fre-pre-warming",      # GLIC FRE 预热
+    "glic-button-pressed-state", # GLIC 按钮按下状态
+    "glic-button-alt-label",     # GLIC 按钮替代标签
+]
+
 
 # ============== 颜色输出 ==============
 
@@ -275,6 +290,46 @@ def check_locale_config(config: dict) -> dict:
     return results
 
 
+def check_flags_config(config: dict) -> dict:
+    """检查 Chrome Flags 配置 (chrome://flags)"""
+    results = {}
+    
+    # 获取已启用的 flags 列表
+    browser = config.get("browser", {})
+    enabled_flags = browser.get("enabled_labs_experiments", [])
+    
+    # 创建已启用 flags 的集合（只保留 flag 名称，去掉 @1/@2 后缀）
+    enabled_set = set()
+    for flag in enabled_flags:
+        # 格式: "flag-name@1" 或 "flag-name@2"
+        if "@" in flag:
+            name = flag.rsplit("@", 1)[0]
+            value = flag.rsplit("@", 1)[1]
+            if value == "1":  # @1 表示启用
+                enabled_set.add(name)
+        else:
+            enabled_set.add(flag)
+    
+    # 检查每个 GLIC flag
+    missing_flags = []
+    enabled_count = 0
+    
+    for flag in GLIC_FLAGS:
+        if flag in enabled_set:
+            enabled_count += 1
+        else:
+            missing_flags.append(flag)
+    
+    results["glic_flags"] = {
+        "current": f"{enabled_count}/{len(GLIC_FLAGS)} 已启用",
+        "target": f"{len(GLIC_FLAGS)}/{len(GLIC_FLAGS)} 全部启用",
+        "ok": enabled_count == len(GLIC_FLAGS),
+        "missing": missing_flags
+    }
+    
+    return results
+
+
 def check_profile_language(profile_prefs: dict) -> dict:
     """检查 Profile 的语言偏好设置"""
     results = {}
@@ -363,6 +418,43 @@ def fix_locale_config(config: dict) -> int:
     return fixed
 
 
+def fix_flags_config(config: dict) -> int:
+    """修复 Chrome Flags 配置 (启用 GLIC 相关 flags)"""
+    fixed = 0
+    
+    # 确保 browser 和 enabled_labs_experiments 存在
+    if "browser" not in config:
+        config["browser"] = {}
+    
+    enabled_flags = config["browser"].get("enabled_labs_experiments", [])
+    
+    # 创建已存在 flags 的字典（flag-name -> full entry）
+    existing_flags = {}
+    for flag in enabled_flags:
+        if "@" in flag:
+            name = flag.rsplit("@", 1)[0]
+            existing_flags[name] = flag
+        else:
+            existing_flags[flag] = flag
+    
+    # 添加缺失的 GLIC flags
+    for flag in GLIC_FLAGS:
+        flag_enabled = f"{flag}@1"
+        
+        if flag not in existing_flags:
+            # 不存在，添加
+            enabled_flags.append(flag_enabled)
+            fixed += 1
+        elif existing_flags[flag] != flag_enabled:
+            # 存在但未启用（@2 表示禁用），替换为启用
+            idx = enabled_flags.index(existing_flags[flag])
+            enabled_flags[idx] = flag_enabled
+            fixed += 1
+    
+    config["browser"]["enabled_labs_experiments"] = enabled_flags
+    return fixed
+
+
 def fix_profile_language(profile_prefs: dict) -> int:
     """修复 Profile 的语言偏好设置"""
     fixed = 0
@@ -398,7 +490,7 @@ def print_banner():
 
 def print_check_results(country_results: dict, glic_results: dict, 
                         locale_results: dict, lang_results: dict,
-                        chrome_name: str) -> bool:
+                        flags_results: dict, chrome_name: str) -> bool:
     """打印检查结果"""
     print(colored(f"\n📋 {chrome_name} 配置检查报告", Color.BOLD))
     print("=" * 60)
@@ -422,6 +514,16 @@ def print_check_results(country_results: dict, glic_results: dict,
         print(f"  {profile}: {status}")
         if not result["ok"]:
             all_ok = False
+    
+    # Chrome Flags
+    print(colored("\n🚩 Chrome Flags (chrome://flags):", Color.BLUE))
+    for key, result in flags_results.items():
+        status = colored("✅ 正常", Color.GREEN) if result["ok"] else colored("⚠️ 需启用", Color.YELLOW)
+        print(f"  {key}: {result['current']}  {status}")
+        if not result["ok"]:
+            all_ok = False
+            if result.get("missing"):
+                print(f"    缺失: {', '.join(result['missing'][:3])}..." if len(result['missing']) > 3 else f"    缺失: {', '.join(result['missing'])}")
     
     # 语言配置
     print(colored("\n🌐 Chrome 语言配置:", Color.MAGENTA))
@@ -483,6 +585,7 @@ def process_chrome(user_data_path: Path, fix: bool = False) -> bool:
     country_results = check_country_config(config)
     glic_results = check_glic_config(config)
     locale_results = check_locale_config(config)
+    flags_results = check_flags_config(config)
     
     # 检查 Default Profile 的语言偏好
     default_prefs_path = user_data_path / "Default" / "Preferences"
@@ -496,7 +599,7 @@ def process_chrome(user_data_path: Path, fix: bool = False) -> bool:
     
     # 打印检查结果
     all_ok = print_check_results(country_results, glic_results, 
-                                  locale_results, lang_results, chrome_name)
+                                  locale_results, lang_results, flags_results, chrome_name)
     
     if fix and not all_ok:
         print(colored("\n🔧 正在修复配置...", Color.YELLOW))
@@ -510,10 +613,13 @@ def process_chrome(user_data_path: Path, fix: bool = False) -> bool:
         country_fixed = fix_country_config(config, last_version)
         glic_fixed = fix_glic_config(config)
         locale_fixed = fix_locale_config(config)
+        flags_fixed = fix_flags_config(config)
         
         if save_config(local_state_path, config):
             print(colored(f"   ✅ 已修复 {country_fixed} 个国家配置项", Color.GREEN))
             print(colored(f"   ✅ 已为 {glic_fixed} 个 Profile 启用 GLIC", Color.GREEN))
+            if flags_fixed:
+                print(colored(f"   ✅ 已启用 {flags_fixed} 个 Chrome Flags", Color.GREEN))
             if locale_fixed:
                 print(colored(f"   ✅ 已修复语言区域设置", Color.GREEN))
         
