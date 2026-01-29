@@ -116,8 +116,7 @@ def verify_activation() -> bool:
     # 提示输入激活码
     print(colored("\n🔑 程序未激活", Color.BOLD))
     print(f"   您的设备 ID: {colored(hwid, Color.CYAN)}")
-    print(f"   提示: 懂技术的用户可以直接从 GitHub 拉取源码运行，无需激活码。")
-    print(f"         本项目 GitHub: https://github.com/Kenny-BBDog/gemini-in-chrome-enabler")
+    print(f"   请联系开发者获取激活码以继续使用。")
     
     while True:
         code = input(f"\n   请输入激活码 (或输入 q 退出): ").strip().upper()
@@ -135,7 +134,7 @@ def verify_activation() -> bool:
                 print(colored(f"   ⚠️ 激活成功但无法保存许可证文件: {e}", Color.YELLOW))
                 return True
         else:
-            print(colored("   ❌ 激活码错误，请重试或前往 GitHub 查看源码。", Color.RED))
+            print(colored("   ❌ 激活码错误，请检查输入或联系开发者。", Color.RED))
 
 
 # ============== Chrome 进程管理 ==============
@@ -411,6 +410,43 @@ def check_profile_language(profile_prefs: dict) -> dict:
     return results
 
 
+def check_account_eligibility(profile_prefs: dict) -> dict:
+    """自动检测账号是否有 Gemini 资格"""
+    results = {}
+    
+    # 在 sync 块中查找 glic_rollout_eligibility
+    sync_config = profile_prefs.get("sync", {})
+    is_eligible = sync_config.get("glic_rollout_eligibility", None)
+    
+    # 递归查找函数
+    def find_key_recursive(obj, target_key):
+        if isinstance(obj, dict):
+            if target_key in obj:
+                return obj[target_key]
+            for v in obj.values():
+                res = find_key_recursive(v, target_key)
+                if res is not None:
+                    return res
+        elif isinstance(obj, list):
+            for item in obj:
+                res = find_key_recursive(item, target_key)
+                if res is not None:
+                    return res
+        return None
+    
+    # 如果一级查找失败，尝试全局递归查找
+    if is_eligible is None:
+        is_eligible = find_key_recursive(profile_prefs, "glic_rollout_eligibility")
+
+    results["eligibility"] = {
+        "current": str(is_eligible) if is_eligible is not None else "未知",
+        "target": "True",
+        "ok": is_eligible == True
+    }
+    
+    return results
+
+
 # ============== 配置修复 ==============
 
 def backup_config(path: Path) -> Path | None:
@@ -551,13 +587,24 @@ def print_banner():
 
 def print_check_results(country_results: dict, glic_results: dict, 
                         locale_results: dict, lang_results: dict,
-                        flags_results: dict, chrome_name: str) -> bool:
+                        flags_results: dict, eligibility_results: dict, chrome_name: str) -> bool:
     """打印检查结果"""
     print(colored(f"\n📋 {chrome_name} 配置检查报告", Color.BOLD))
     print("=" * 60)
     
     all_ok = True
     
+    # 账号资格 (关键)
+    if eligibility_results:
+        print(colored("\n👤 Google 账号资格 (同步数据):", Color.YELLOW))
+        for key, result in eligibility_results.items():
+            status = colored("✅ 有资格", Color.GREEN) if result["ok"] else colored("❌ 无资格", Color.RED)
+            if result["current"] == "None" or result["current"] == "未知":
+                status = colored("❓ 未检测到 (请确保已登录并开启同步)", Color.YELLOW)
+            print(f"  Gemini 资格: {result['current']}  {status}")
+            if not result["ok"] and result["current"] == "False":
+                all_ok = False
+
     # 国家配置
     print(colored("\n🌍 国家/地区配置:", Color.BLUE))
     for key, result in country_results.items():
@@ -648,19 +695,22 @@ def process_chrome(user_data_path: Path, fix: bool = False) -> bool:
     locale_results = check_locale_config(config)
     flags_results = check_flags_config(config)
     
-    # 检查 Default Profile 的语言偏好
+    # 检查 Default Profile 的偏好
     default_prefs_path = user_data_path / "Default" / "Preferences"
     lang_results = {}
+    eligibility_results = {}
     default_prefs = None
     
     if default_prefs_path.exists():
         default_prefs = load_config(default_prefs_path)
         if default_prefs:
             lang_results = check_profile_language(default_prefs)
+            eligibility_results = check_account_eligibility(default_prefs)
     
     # 打印检查结果
     all_ok = print_check_results(country_results, glic_results, 
-                                  locale_results, lang_results, flags_results, chrome_name)
+                                  locale_results, lang_results, flags_results, 
+                                  eligibility_results, chrome_name)
     
     if fix and not all_ok:
         print(colored("\n🔧 正在修复配置...", Color.YELLOW))

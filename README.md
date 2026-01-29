@@ -10,28 +10,10 @@
 
 ### 📥 下载与使用
 
-本工具提供两种使用方式：
-
-#### 方案 A：直接运行 📦 (推荐普通用户)
+#### 方案：直接运行 📦 (推荐)
 直接下载 [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe) 运行。
 - **优点**：无需安装 Python，一键双击运行。
-- **注意**：首次运行会显示**设备 ID**。为了过滤无效用户，你需要输入**激活码**。
-- **获取激活码**：请联系开发者并提供你的设备 ID。
-
-#### 方案 B：源码运行 🛠️ (推荐开发者/进阶用户)
-如果你不想使用激活码，或者想确认代码安全性，可以直接通过 Python 运行源码：
-```bash
-# 1. 克隆项目
-git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
-cd gemini-in-chrome-enabler
-
-# 2. 安装依赖
-pip install psutil
-
-# 3. 运行
-python enable_gemini.py --fix
-```
-- **注意**：源码运行**不设激活验证**，完全开源透明。
+- **流程**：首次运行会显示**设备 ID** -> 联系开发者获取**激活码** -> 激活后一键修复程序。
 
 ---
 
@@ -46,6 +28,7 @@ python enable_gemini.py --fix
 
 | 检测项 | 可自动修复 | 说明 |
 |--------|-----------|------|
+| 👤 Google 账号资格 | ✅ | **新增** 自动检测 Sync 状态确定是否有资格 |
 | 🌍 国家/地区配置 | ✅ | `variations_country` 等配置项 |
 | 🤖 GLIC 配置 | ✅ | `is_glic_eligible` 启用 Gemini |
 | 🚩 Chrome Flags | ✅ | **新增** 自动启用 9 个 GLIC 实验功能 |
@@ -186,6 +169,7 @@ One-click detection and enablement of Chrome AI features:
 
 | Item | Auto-fixable | Description |
 |------|-------------|-------------|
+| 👤 Google Account Eligibility | ✅ | **NEW** Auto-detect Sync status for Gemini eligibility |
 | 🌍 Country Config | ✅ | `variations_country` and related |
 | 🤖 GLIC Config | ✅ | `is_glic_eligible` for Gemini |
 | 🚩 Chrome Flags | ✅ | **NEW** Auto-enable 9 GLIC experiment flags |
@@ -198,30 +182,23 @@ One-click detection and enablement of Chrome AI features:
 
 ### 📥 Download & Usage
 
-We provide two ways to use this tool:
-
-#### Option A: Portable EXE 📦 (Recommended for general users)
+#### Recommendation: Portable EXE 📦
 Download [releases/GeminiEnabler.exe](https://github.com/Kenny-BBDog/gemini-in-chrome-enabler/raw/main/releases/GeminiEnabler.exe) and run.
 - **Pros**: No Python required, just double-click.
-- **Note**: On first run, it will display a **Device ID**. You will need an **Activation Code** to proceed.
-- **Get Code**: Contact the developer with your Device ID.
-
-#### Option B: Run from Source 🛠️ (Recommended for developers)
-If you prefer not to use an activation code or want to audit the code, run it via Python:
-```bash
-# 1. Clone
-git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
-cd gemini-in-chrome-enabler
-
-# 2. Install deps
-pip install psutil
-
-# 3. Run
-python enable_gemini.py --fix
-```
-- **Note**: Running from source **removes the activation requirement**.
+- **Process**: Run to get **Device ID** -> Contact developer for **Activation Code** -> Enjoy.
 
 ---
+
+## 🛠️ Developers
+
+If you want to audit the code or build from source:
+
+```bash
+git clone https://github.com/Kenny-BBDog/gemini-in-chrome-enabler.git
+cd gemini-in-chrome-enabler
+pip install psutil
+python enable_gemini.py --fix
+```
 
 ### Manual: Set Google Account Language
 
