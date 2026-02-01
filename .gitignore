@@ -27,3 +27,10 @@ Thumbs.db
 # GeminiEnabler
 .license
 
+# Xianyu versions (paid/encrypted)
+*xianyu*
+*Xianyu*
+*闲鱼*
+key_gen.py
+KeyGen*.html
+*_xianyu.py
